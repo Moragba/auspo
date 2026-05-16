@@ -24,7 +24,6 @@ public class Verband {
     }
 
     //Getter und Setter
-
     public Long getId(){
         return id;
     }
@@ -45,8 +44,4 @@ public class Verband {
     public void setKuerzel(String kuerzel){
         this.kuerzel = kuerzel;
     }
-
-
-
-
 }
