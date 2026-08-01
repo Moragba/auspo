@@ -4,10 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
 
 @Entity
-@Table(name="verband")
 public class Verband {
 
     //Membervariablen
@@ -16,7 +15,7 @@ public class Verband {
     private Long id;
 
     private String name;
-    private String kuerzel;
+    private String kuerzel;    
 
     //Standard Konstruktor
     public Verband(){
@@ -44,4 +43,5 @@ public class Verband {
     public void setKuerzel(String kuerzel){
         this.kuerzel = kuerzel;
     }
+
 }
