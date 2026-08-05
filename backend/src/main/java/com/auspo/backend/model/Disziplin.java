@@ -20,8 +20,7 @@ public class Disziplin {
 
     private String bezeichnung;
     
-    @ManyToOne(fetch = FetchType.LAZY)    
-    private Verband verband;
+    private String verband;
 
     @Column(columnDefinition = "TEXT")
     private String waffenart;
@@ -36,11 +35,13 @@ public class Disziplin {
 
     private String anschlagsart;
 
-    private Integer wettkampfschuesse;
+    private String wettkampfschuesse;
 
-    private Double zeitvorgabeInMin;
+    private String zeitvorgabeInMin;
 
-    private Integer scheibenNr;
+    private String scheibenNr;
+
+    private String infos;
     
 
 
@@ -71,10 +72,10 @@ public class Disziplin {
         this.bezeichnung = bezeichnung;
     }
 
-    public Verband getVerband(){
+    public String getVerband(){
         return verband;
     }
-    public void setVerband(Verband verband){
+    public void setVerband(String verband){
         this.verband = verband;
     }
 
@@ -126,27 +127,35 @@ public class Disziplin {
         this.anschlagsart = anschlagsart;
     }
 
-    public Integer getWettkampfschuesse() {
+    public String getWettkampfschuesse() {
         return wettkampfschuesse;
     }
 
-    public void setWettkampfschuesse(Integer wettkampfschuesse) {
+    public void setWettkampfschuesse(String wettkampfschuesse) {
         this.wettkampfschuesse = wettkampfschuesse;
     }
 
-    public Double getZeitvorgabeInMin() {
+    public String getZeitvorgabeInMin() {
         return zeitvorgabeInMin;
     }
 
-    public void setZeitvorgabeInMin(Double zeitvorgabeInMin) {
+    public void setZeitvorgabeInMin(String zeitvorgabeInMin) {
         this.zeitvorgabeInMin = zeitvorgabeInMin;
     }
 
-    public Integer getScheibenNr() {
+    public String getScheibenNr() {
         return scheibenNr;
     }
 
-    public void setScheibenNr(Integer scheibenNr) {
+    public void setScheibenNr(String scheibenNr) {
         this.scheibenNr = scheibenNr;
+    }
+
+    public String getInfos() {
+        return infos;
+    }
+
+    public void setInfos(String infos) {
+        this.infos = infos;
     }
 }

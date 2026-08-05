@@ -33,7 +33,7 @@ export default function AusschreibungGenerator() {
 
   // Verbände beim Start laden (aus MySQL über Spring Boot)
   useEffect(() => {
-    fetch('/api/ausschreibung/verbaende')
+    fetch('http://localhost:8080/api/verbaende')
       .then((res) => res.json())
       .then((data) => setVerbaende(data))
       .catch((err) => console.error('Fehler beim Laden der Verbände:', err));
@@ -49,7 +49,7 @@ export default function AusschreibungGenerator() {
 
     if (verband) {
       setLoadingDisziplinen(true);
-      fetch(`/api/ausschreibung/disziplinen?verband=${encodeURIComponent(verband)}`)
+      fetch(`http://localhost:8080/api/disziplinen?verband=${encodeURIComponent(verband)}`)
         .then((res) => res.json())
         .then((data) => {
           setDisziplinen(data);
@@ -66,7 +66,7 @@ export default function AusschreibungGenerator() {
 
     if (disziplinId) {
       setLoadingAltersklassen(true);
-      fetch(`/api/ausschreibung/altersklassen?disziplinId=${encodeURIComponent(disziplinId)}`)
+      fetch(`http://localhost:8080/api/altersklassen?disziplinId=${encodeURIComponent(disziplinId)}`)
         .then((res) => res.json())
         .then((data) => {
           setAltersklassen(data);
@@ -105,7 +105,7 @@ export default function AusschreibungGenerator() {
     console.log('Erstelle Ausschreibung:', ausschreibungPayload);
 
     // POST an Spring Boot -> Speichern in MySQL & PDF-Generierung anstoßen
-    fetch('/api/ausschreibung/erstellen', {
+    fetch('http://localhost:8080/api/ausschreibung/erstellen', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(ausschreibungPayload)
@@ -218,8 +218,10 @@ export default function AusschreibungGenerator() {
           <label>Regelwerk / Verband:</label>
           <select value={selectedVerband} onChange={handleVerbandChange} required>
             <option value="">-- Verband wählen --</option>
-            {verbaende.map((v) => (
-              <option key={v} value={v}>{v}</option>
+            {verbaende.map((verband) => (
+              <option key={`${verband.kuerzel}`} value={`${verband.name}`}>
+                {`${verband.kuerzel} ${verband.name}`}
+              </option>
             ))}
           </select>
         </div>
@@ -227,6 +229,7 @@ export default function AusschreibungGenerator() {
         <div className="form-group">
           <label>Auszuschreibende Disziplin:</label>
           <select
+            style={{ maxWidth: '40vw', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
             value={selectedDisziplin}
             onChange={handleDisziplinChange}
             disabled={!selectedVerband || loadingDisziplinen}
@@ -235,9 +238,9 @@ export default function AusschreibungGenerator() {
             <option value="">
               {loadingDisziplinen ? 'Lade Disziplinen...' : '-- Erst Verband wählen --'}
             </option>
-            {disziplinen.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.bezeichnung} ({d.waffenart} - {d.distanz}m)
+            {disziplinen.map((disziplin) => (
+              <option key={disziplin.id} value={disziplin.id} >
+                {disziplin.kennziffer} ({disziplin.bezeichnung}: {disziplin.waffenart} - {disziplin.distanz}m)
               </option>
             ))}
           </select>
@@ -251,18 +254,42 @@ export default function AusschreibungGenerator() {
           {loadingAltersklassen ? (
             <p>Lade Altersklassen...</p>
           ) : (
-            <div className="checkbox-grid">
-              {altersklassen.map((ak) => (
-                <label key={ak.id || ak.kennziffer} className="checkbox-item">
-                  <input
-                    type="checkbox"
-                    checked={selectedAltersklassen.includes(ak.id || ak.kennziffer)}
-                    onChange={() => handleAltersklasseToggle(ak.id || ak.kennziffer)}
-                  />
-                  <strong>{ak.beschreibung}</strong> ({ak.geschlecht}, Jahrgang {ak.jahrgaenge})
-                </label>
-              ))}
-            </div>
+            <table className="checkbox-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+  <tbody>
+    {/* Wir springen in 2er-Schritten durch das Array */}
+    {altersklassen.reduce((rows, ak, index) => {
+      if (index % 2 === 0) {
+        // Starte eine neue Zeile für das erste Element des Paars
+        rows.push([ak]);
+      } else {
+        // Füge das zweite Element zur aktuellen Zeile hinzu
+        rows[rows.length - 1].push(ak);
+      }
+      return rows;
+    }, []).map((pair, rowIndex) => (
+      <tr key={rowIndex}>
+        {pair.map((ak) => {
+          const keyId = ak.id || ak.kennziffer;
+          return (
+            <td key={keyId} style={{ width: '50%', padding: '8px', verticalAlign: 'top' }}>
+              <label className="checkbox-item" style={{ display: 'block', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={selectedAltersklassen.includes(keyId)}
+                  onChange={() => handleAltersklasseToggle(keyId)}
+                  style={{ marginRight: '8px' }}
+                />
+                <strong>{ak.beschreibung}</strong> {ak.kennziffer} ({ak.geschlecht}, Alter {ak.age})
+              </label>
+            </td>
+          );
+        })}
+        {/* Falls die Liste ungerade ist, füllen wir die zweite Zelle leer auf */}
+        {pair.length === 1 && <td style={{ width: '50%' }}></td>}
+      </tr>
+    ))}
+  </tbody>
+</table>
           )}
         </fieldset>
       )}

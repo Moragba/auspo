@@ -1,0 +1,394 @@
+[
+  {
+    "kennziffer": 20,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Schüler I",
+    "alter": "10 bis 14 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 21,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Schülerinnen I",
+    "alter": "10 bis 14 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 30,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Jugend m",
+    "alter": "15 bis 16 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 31,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Jugend w",
+    "alter": "15 bis 16 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 42,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Junioren II",
+    "alter": "17 bis 18 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 43,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Juniorinnen II",
+    "alter": "17 bis 18 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 40,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Junioren I",
+    "alter": "19 bis 20 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 41,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Juniorinnen I",
+    "alter": "19 bis 20 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 10,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Herren I",
+    "alter": "21 bis 40 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 11,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Damen I",
+    "alter": "21 bis 40 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 12,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Herren II",
+    "alter": "41 bis 50 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 13,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Damen II",
+    "alter": "41 bis 50 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 14,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Herren III",
+    "alter": "51 bis 60 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 15,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Damen III",
+    "alter": "51 bis 60 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 16,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Herren IV",
+    "alter": "61 bis 70 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 17,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Damen IV",
+    "alter": "61 bis 70 Jahre",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 18,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Herren V",
+    "alter": "71 Jahre und älter",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 19,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Damen V",
+    "alter": "71 Jahre und älter",
+    "kategorie": "Gewehr, Pistole, Flinte, Sommerbiathlon, Target Sprint, Blasrohr"
+  },
+  {
+    "kennziffer": 70,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Auflage – Senioren I",
+    "alter": "51 bis 60 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 71,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Auflage – Seniorinnen I",
+    "alter": "51 bis 60 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 72,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Auflage – Senioren II",
+    "alter": "61 bis 65 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 73,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Auflage – Seniorinnen II",
+    "alter": "61 bis 65 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 74,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Auflage – Senioren III",
+    "alter": "66 bis 70 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 75,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Auflage – Seniorinnen III",
+    "alter": "66 bis 70 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 76,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Auflage – Senioren IV",
+    "alter": "71 bis 75 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 77,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Auflage – Seniorinnen IV",
+    "alter": "71 bis 75 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 78,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Auflage – Senioren V",
+    "alter": "76 bis 80 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 79,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Auflage – Seniorinnen V",
+    "alter": "76 bis 80 Jahre",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 80,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Auflage – Senioren VI",
+    "alter": "81 Jahre und älter",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 81,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Auflage – Seniorinnen VI",
+    "alter": "81 Jahre und älter",
+    "kategorie": "Auflage"
+  },
+  {
+    "kennziffer": 24,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Bogen – Schüler C m",
+    "alter": "9 bis 10 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 25,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Bogen – Schüler C w",
+    "alter": "9 bis 10 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 22,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Bogen – Schüler B m",
+    "alter": "11 bis 12 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 23,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Bogen – Schüler B w",
+    "alter": "11 bis 12 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 20,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Bogen – Schüler A m",
+    "alter": "13 bis 14 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 21,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Bogen – Schüler A w",
+    "alter": "13 bis 14 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 30,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Bogen – Jugend m",
+    "alter": "15 bis 17 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 31,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Bogen – Jugend w",
+    "alter": "15 bis 17 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 40,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Bogen – Junioren",
+    "alter": "18 bis 20 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 41,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Bogen – Juniorinnen",
+    "alter": "18 bis 20 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 10,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Bogen – Herren",
+    "alter": "21 bis 49 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 11,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Bogen – Damen",
+    "alter": "21 bis 49 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 12,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Bogen – Masters m",
+    "alter": "50 bis 65 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 13,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Bogen – Masters w",
+    "alter": "50 bis 65 Jahre",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 14,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Bogen – Senioren",
+    "alter": "66 Jahre und älter",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 15,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Bogen – Seniorinnen",
+    "alter": "66 Jahre und älter",
+    "kategorie": "Bogen"
+  },
+  {
+    "kennziffer": 24,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Lichtschießen – Schüler III m",
+    "alter": "9 bis 10 Jahre",
+    "kategorie": "Lichtschießen"
+  },
+  {
+    "kennziffer": 25,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Lichtschießen – Schüler III w",
+    "alter": "9 bis 10 Jahre",
+    "kategorie": "Lichtschießen"
+  },
+  {
+    "kennziffer": 22,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Lichtschießen – Schüler II m",
+    "alter": "11 bis 12 Jahre",
+    "kategorie": "Lichtschießen"
+  },
+  {
+    "kennziffer": 23,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Lichtschießen – Schüler II w",
+    "alter": "11 bis 12 Jahre",
+    "kategorie": "Lichtschießen"
+  },
+  {
+    "kennziffer": 24,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Blasrohr – Schüler III m",
+    "alter": "7 bis 10 Jahre",
+    "kategorie": "Blasrohr (Schüler)"
+  },
+  {
+    "kennziffer": 25,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Blasrohr – Schüler III w",
+    "alter": "7 bis 10 Jahre",
+    "kategorie": "Blasrohr (Schüler)"
+  },
+  {
+    "kennziffer": 22,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Blasrohr – Schüler II m",
+    "alter": "11 bis 12 Jahre",
+    "kategorie": "Blasrohr (Schüler)"
+  },
+  {
+    "kennziffer": 23,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Blasrohr – Schüler II w",
+    "alter": "11 bis 12 Jahre",
+    "kategorie": "Blasrohr (Schüler)"
+  },
+  {
+    "kennziffer": 20,
+    "geschlecht": "Männlich",
+    "bezeichnung": "Blasrohr – Schüler I m",
+    "alter": "13 bis 14 Jahre",
+    "kategorie": "Blasrohr (Schüler)"
+  },
+  {
+    "kennziffer": 21,
+    "geschlecht": "Weiblich",
+    "bezeichnung": "Blasrohr – Schüler I w",
+    "alter": "13 bis 14 Jahre",
+    "kategorie": "Blasrohr (Schüler)"
+  }
+]
