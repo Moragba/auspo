@@ -102,23 +102,44 @@ export default function AusschreibungGenerator() {
       angeboteneAltersklassen: selectedAltersklassen
     };
 
-    console.log('Erstelle Ausschreibung:', ausschreibungPayload);
+    const test = {      
+      verband: "selectedVerband",
+      disziplinId: "selectedDisziplin",
+      angeboteneAltersklassen: "selectedAltersklassen"
+    };
+
+    // console.log('Erstelle Ausschreibung:', ausschreibungPayload);
+    console.log('Erstelle test:', ausschreibungPayload);
 
     // POST an Spring Boot -> Speichern in MySQL & PDF-Generierung anstoßen
-    fetch('http://localhost:8080/api/ausschreibung/erstellen', {
+    fetch('http://localhost:8080/api/getpdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(ausschreibungPayload)
     })
-      .then((res) => res.blob()) // z. B. als PDF-Download zurückbekommen
+      .then((res) => {
+        // Falls der Server einen Fehler (z.B. 500) wirft, fangen wir ihn hier ab
+        if (!res.ok) {
+          throw new Error(`Server-Fehler: ${res.status}`);
+        }
+        return res.blob(); // Wandelt die Antwort in ein Binär-Objekt um
+      })
       .then((blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
+        a.style.display = 'none';
         a.href = url;
-        a.download = `Ausschreibung_${eventData.titel.replace(/\s+/g, '_')}.pdf`;
+        const sichererTitel = ('TestTitel');
+        a.download = `${sichererTitel}.pdf`;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
       })
-      .catch((err) => console.error('Fehler beim Erstellen:', err));
+      .catch((err) => {
+        console.error('Fehler beim PDF-Download:', err);
+        alert('Der Download ist fehlgeschlagen: ' + err.message);
+      });
   };
 
   return (
@@ -346,7 +367,7 @@ export default function AusschreibungGenerator() {
         </div>
       </fieldset>
 
-      <button type="submit" className="submit-btn">
+      <button onClick={handleSubmit} className="submit-btn">
         📄 Ausschreibung generieren (PDF / Vorschau)
       </button>
     </form>
