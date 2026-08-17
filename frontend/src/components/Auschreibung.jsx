@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+const api_url = import.meta.env.VITE_API_URL 
 
 export default function AusschreibungGenerator() {
   // 1. Vereins- & Event-Stammdaten
@@ -33,7 +34,7 @@ export default function AusschreibungGenerator() {
 
   // Verbände beim Start laden (aus MySQL über Spring Boot)
   useEffect(() => {
-    fetch('http://localhost:8080/api/verbaende')
+    fetch(`${api_url}/api/verbaende`)
       .then((res) => res.json())
       .then((data) => setVerbaende(data))
       .catch((err) => console.error('Fehler beim Laden der Verbände:', err));
@@ -49,7 +50,7 @@ export default function AusschreibungGenerator() {
 
     if (verband) {
       setLoadingDisziplinen(true);
-      fetch(`http://localhost:8080/api/disziplinen?verband=${encodeURIComponent(verband)}`)
+      fetch(`${api_url}/api/disziplinen?verband=${encodeURIComponent(verband)}`)
         .then((res) => res.json())
         .then((data) => {
           setDisziplinen(data);
@@ -66,7 +67,7 @@ export default function AusschreibungGenerator() {
 
     if (disziplinId) {
       setLoadingAltersklassen(true);
-      fetch(`http://localhost:8080/api/altersklassen?disziplinId=${encodeURIComponent(disziplinId)}`)
+      fetch(`${api_url}/api/altersklassen?disziplinId=${encodeURIComponent(disziplinId)}`)
         .then((res) => res.json())
         .then((data) => {
           setAltersklassen(data);
@@ -112,7 +113,7 @@ export default function AusschreibungGenerator() {
     console.log('Erstelle test:', ausschreibungPayload);
 
     // POST an Spring Boot -> Speichern in MySQL & PDF-Generierung anstoßen
-    fetch('http://localhost:8080/api/getpdf', {
+    fetch(`${api_url}/api/getpdf`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(ausschreibungPayload)
@@ -240,7 +241,7 @@ export default function AusschreibungGenerator() {
           <select value={selectedVerband} onChange={handleVerbandChange} required>
             <option value="">-- Verband wählen --</option>
             {verbaende.map((verband) => (
-              <option key={`${verband.kuerzel}`} value={`${verband.name}`}>
+              <option key={`${verband.kuerzel}`} value={`${verband.kuerzel}`}>
                 {`${verband.kuerzel} ${verband.name}`}
               </option>
             ))}

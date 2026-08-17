@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.auspo.backend.model.AltersKlasse;
@@ -62,7 +63,12 @@ public class Controller {
     }
 
     @GetMapping("/disziplinen")
-    public List<Disziplin> getDisziplinen() {
+    public List<Disziplin> getDisziplinen(@RequestParam(required = false) String verband) {
+        System.out.println(verband);       
+        if (verband != null && !verband.trim().isEmpty()) {            
+            return disziplinRepo.findByVerbandIgnoreCase(verband);
+        }
+
         return disziplinRepo.findAll();
     }
 
