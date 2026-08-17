@@ -11,10 +11,10 @@ export default function AusschreibungGenerator() {
     ort: '',
     startgeld: '',
     anmeldeschluss: '',
-    austragungsort: '',
+    adresse: '',
     ansprechpartner: '',
     email: '',
-    hinweiseSpO: true, // Standardmäßig aktiv (Regelwerk)
+    hinweiseSpO: true, 
     haftungsausschluss: true
   });
 
@@ -95,22 +95,16 @@ export default function AusschreibungGenerator() {
   // Ausschreibung generieren / absenden
   const handleSubmit = (e) => {
     e.preventDefault();
+    
 
     const ausschreibungPayload = {
       ...eventData,
       verband: selectedVerband,
-      disziplinId: selectedDisziplin,
+      disziplin: selectedDisziplin,
       angeboteneAltersklassen: selectedAltersklassen
     };
-
-    const test = {      
-      verband: "selectedVerband",
-      disziplinId: "selectedDisziplin",
-      angeboteneAltersklassen: "selectedAltersklassen"
-    };
-
-    // console.log('Erstelle Ausschreibung:', ausschreibungPayload);
-    console.log('Erstelle test:', ausschreibungPayload);
+    
+    console.log('Erstelle Ausschreibung:', ausschreibungPayload);
 
     // POST an Spring Boot -> Speichern in MySQL & PDF-Generierung anstoßen
     fetch(`${api_url}/api/getpdf`, {
@@ -209,12 +203,24 @@ export default function AusschreibungGenerator() {
         </div>
 
         <div className="form-group">
-          <label>Schießstand / Ort:</label>
+          <label>Adresse:</label>
           <input
             type="text"
-            name="austragungsort"
-            placeholder="z. B. Schützenhaus Musterstadt, Sportweg 1"
-            value={eventData.austragungsort}
+            name="adresse"
+            placeholder="z. B. Sportweg 1"
+            value={eventData.adresse}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Ort:</label>
+          <input
+            type="text"
+            name="ort"
+            placeholder="z. B. 12345 Musterstadt"
+            value={eventData.ort}
             onChange={handleInputChange}
             required
           />

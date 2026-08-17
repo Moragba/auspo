@@ -2,6 +2,8 @@ package com.auspo.backend.controller;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -21,16 +23,20 @@ import com.auspo.backend.model.Verband;
 import com.auspo.backend.repo.AltersKlasseRepo;
 import com.auspo.backend.repo.DisziplinRepo;
 import com.auspo.backend.repo.VerbandRepo;
+import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.ListItem;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.draw.VerticalPositionMark;
 
 
 
@@ -74,58 +80,219 @@ public class Controller {
 
     @PostMapping("/getpdf")
     public ResponseEntity<byte[]> getPdf(@RequestBody Map<String, Object> payload) {
-        System.out.println("Daten sind da! Titel: " + payload.get("verband"));
+        
+        // 1. Felder exakt aus deinem React eventData State auslesen
+        String vereinsname      = (String) payload.getOrDefault("vereinsname", "Vereinsname nicht angegeben");
+        String titel            = (String) payload.getOrDefault("titel", "Ausschreibung");
+        String datumVon          = (String) payload.getOrDefault("datumVon", "");
+        String datumBis          = (String) payload.getOrDefault("datumBis", "");
+        String ort              = (String) payload.getOrDefault("ort", "-");
+        String adresse          = (String) payload.getOrDefault("adresse", "-");
+        String startgeld        = (String) payload.getOrDefault("startgeld", "-");
+        String anmeldeschluss    = formatDatum((String) payload.getOrDefault("anmeldeschluss", "-"));
+        String ansprechpartner  = (String) payload.getOrDefault("ansprechpartner", "-");
+        String email            = (String) payload.getOrDefault("email", "-");
+        Object rawAltersklassen = payload.get("angeboteneAltersklassen");
+        String altersklassenText = "-";
+        if (rawAltersklassen instanceof java.util.List<?>) {
+            java.util.List<?> list = (java.util.List<?>) rawAltersklassen;
+            altersklassenText = String.join(", ", list.stream().map(Object::toString).toList());
+        } else if (rawAltersklassen != null) {
+            altersklassenText = rawAltersklassen.toString();
+        }
+        Object rawDisziplin = payload.get("disziplin");
+        String kennziffer = "-";
+        String bezeichnung = "-";
+        String waffenart = "-";
+        String lauflaenge = "-";
+        String visierung = "-";
+        String geschoss = "-";
+        String distanz = "-";
+        String anschlagsart = "-";
+        String wettkampfschuesse = "-";
+        String zeitvorgabeInMin = "-";
+        String scheibenNr = "-";
+        String infos = "-";
 
+        String disziplinName = null; // Variable zum Speichern des Klartext-Namens der Disziplin
+         
+        if (rawDisziplin != null && !rawDisziplin.toString().isBlank()) {
+        try {
+            Long id = Long.valueOf(rawDisziplin.toString());            
+            Disziplin d = disziplinRepo.findById(id).orElse(null);
+            if (d != null) {
+                kennziffer = d.getKennziffer();
+                bezeichnung = d.getBezeichnung();
+                waffenart = d.getWaffenart();
+                lauflaenge = d.getLauflaenge();
+                visierung = d.getVisierung();
+                geschoss = d.getGeschoss();
+                distanz = d.getDistanz();
+                anschlagsart = d.getAnschlagsart();
+                wettkampfschuesse = d.getWettkampfschuesse();
+                zeitvorgabeInMin = d.getZeitvorgabeInMin();
+                scheibenNr = d.getScheibenNr();
+                infos = d.getInfos();
+            };
+        } catch (NumberFormatException e) {
+            // Falls disziplinId schon als Klartext-Name gesendet wurde
+            disziplinName = rawDisziplin.toString();
+        }
+    }      
         
         
-        // Ein minimales, gültiges "Dummy-PDF" als Byte-Array (nur zum Testen)
-        // Sobald Sie iText oder OpenPDF nutzen, generieren diese Bibliotheken dieses byte[]
-        // byte[] dummyPdfBytes = "%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] >>\nendobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000056 00000 n \n0000000111 00000 n \ntrailer\n<< /Size 4 /Root 1 0 R >>\nstartxref\n190\n%%EOF".getBytes();
-        // 1. Daten aus dem Frontend-Payload auslesen
-        String verband = (String) payload.getOrDefault("verband", "N/A");
-        String disziplin = (String) payload.getOrDefault("disziplinId", "N/A");
-        String altersklassen = String.valueOf(payload.getOrDefault("angeboteneAltersklassen", "N/A"));
-        // 2. Output-Stream zur Speicherung der PDF-Bytes im Arbeitsspeicher
+        // Booleans auslesen
+        boolean hinweiseSpO      = Boolean.TRUE.equals(payload.get("hinweiseSpO"));
+        boolean haftung          = Boolean.TRUE.equals(payload.get("haftungsausschluss"));
+
+        // Datums-String zusammenbauen (z. B. "17.01.2026 - 18.01.2026")
+        String datumText = formatDatum(datumVon);
+        
+        if (!datumBis.isEmpty() && !datumBis.equals(datumVon)) {
+            datumText += " bis " + formatDatum(datumBis);
+        }
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
-            // Dokument im A4-Format erstellen
             Document document = new Document(PageSize.A4, 36, 36, 36, 36);
             PdfWriter.getInstance(document, out);
 
             document.open();
 
-            // Schriftarten definieren
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, new Color(41, 128, 185));
-            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Color.WHITE);
-            Font textFont = FontFactory.getFont(FontFactory.HELVETICA, 11, Color.BLACK);
+            // Farbdesign
+            Color primaryColor  = new Color(34, 112, 62);   
+            Color darkTextColor = new Color(40, 40, 40);
+            Color lightBgColor  = new Color(245, 247, 248);
 
-            // Überschrift
-            Paragraph title = new Paragraph("Ausschreibung", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            title.setSpacingAfter(20);
-            document.add(title);
+            // Fonts
+            Font headerFont  = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, primaryColor);
+            Font titleFont   = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, primaryColor);
+            Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, primaryColor);
+            Font labelFont   = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, darkTextColor);
+            Font bodyFont    = FontFactory.getFont(FontFactory.HELVETICA, 10, darkTextColor);
+            Font footerFont  = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8, Color.GRAY);
 
-            // Tabelle mit 2 Spalten für die Daten erstellen
-            PdfPTable table = new PdfPTable(2);
-            table.setWidthPercentage(100);
-            table.setWidths(new float[]{30, 70}); // Spaltenverhältnis
+            // ==========================================
+            // 1. KOPFZEILE (Vereinsname)
+            // ==========================================
+            Paragraph topHeader = new Paragraph(vereinsname.toUpperCase(), headerFont);
+            topHeader.setAlignment(Element.ALIGN_CENTER);
+            document.add(topHeader);
 
-            // Tabellen-Header
-            addTableCell(table, "Kategorie", headerFont, new Color(41, 128, 185));
-            addTableCell(table, "Wert / Angabe", headerFont, new Color(41, 128, 185));
+            document.add(createLineSeparator(primaryColor, 1.5f));
 
-            // Tabellen-Inhalt
-            addTableCell(table, "Verband", textFont, Color.LIGHT_GRAY);
-            addTableCell(table, verband, textFont, Color.WHITE);
+            // ==========================================
+            // 2. HAUPTTITEL
+            // ==========================================
+            Paragraph mainTitle = new Paragraph("A U S S C H R E I B U N G", titleFont);
+            mainTitle.setAlignment(Element.ALIGN_CENTER);
+            mainTitle.setSpacingBefore(10);
+            document.add(mainTitle);
 
-            addTableCell(table, "Disziplin-ID", textFont, Color.LIGHT_GRAY);
-            addTableCell(table, disziplin, textFont, Color.WHITE);
+            Paragraph eventTitle = new Paragraph(titel, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, darkTextColor));
+            eventTitle.setAlignment(Element.ALIGN_CENTER);
+            eventTitle.setSpacingAfter(15);
+            document.add(eventTitle);
 
-            addTableCell(table, "Altersklassen", textFont, Color.LIGHT_GRAY);
-            addTableCell(table, altersklassen, textFont, Color.WHITE);
+            // ==========================================
+            // 3. ECKDATEN-BOX (Datum, Ort, Anmeldeschluss)
+            // ==========================================
+            PdfPTable infoBox = new PdfPTable(1);
+            infoBox.setWidthPercentage(100);
 
-            document.add(table);
+            PdfPCell cell = new PdfPCell();
+            cell.setBackgroundColor(lightBgColor);
+            cell.setBorderColor(primaryColor);
+            cell.setBorderWidth(1f);
+            cell.setPadding(10);
+
+            Paragraph boxContent = new Paragraph();
+            boxContent.add(new Chunk("Datum: ", labelFont));
+            boxContent.add(new Chunk(new VerticalPositionMark(), 120, false));
+            boxContent.add(new Chunk((datumText.isEmpty() ? "-" : datumText) + "\n", bodyFont));
+
+            boxContent.add(new Chunk("Adresse: ", labelFont));            
+            boxContent.add(new Chunk(new VerticalPositionMark(), 120, false));
+            boxContent.add(new Chunk(adresse + "\n", bodyFont));
+
+            boxContent.add(new Chunk("Ort: ", labelFont));
+            boxContent.add(new Chunk(new VerticalPositionMark(), 120, false));                        
+            boxContent.add(new Chunk(ort + "\n", bodyFont));
+
+            boxContent.add(new Chunk("Anmeldeschluss: ", labelFont));
+            boxContent.add(new Chunk(new VerticalPositionMark(), 120, false));
+            boxContent.add(new Chunk(anmeldeschluss, bodyFont));
+
+            cell.addElement(boxContent);
+            infoBox.addCell(cell);
+            infoBox.setSpacingAfter(15);
+            document.add(infoBox);
+
+            // ==========================================
+            // 4. DETAIL-TABELLE
+            // ==========================================
+            PdfPTable detailsTable = new PdfPTable(2);
+            detailsTable.setWidthPercentage(100);
+            detailsTable.setWidths(new float[]{30, 70});
+
+            addDetailRow(detailsTable, "Veranstalter:", vereinsname, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Startgeld:", startgeld, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Ansprechpartner:", ansprechpartner, labelFont, bodyFont);
+            addDetailRow(detailsTable, "E-Mail für Meldung:", email, labelFont, bodyFont);
+
+            detailsTable.setSpacingAfter(20);
+
+            // Disziplin-Spezifische Felder aus der Datenbank
+            String disziplinTitel = (!kennziffer.isEmpty() ? kennziffer + " " : "") + bezeichnung;
+            addDetailRow(detailsTable, "Disziplin:", disziplinTitel, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Distanz:", distanz, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Anschlag:", anschlagsart, labelFont, bodyFont);
+
+            String programmText = wettkampfschuesse + (!wettkampfschuesse.isEmpty() ? " Schuss" : "") 
+                + (!zeitvorgabeInMin.isEmpty() ? " in " + zeitvorgabeInMin + " Min." : "");
+            addDetailRow(detailsTable, "Programm:", programmText, labelFont, bodyFont);
+
+            addDetailRow(detailsTable, "Waffenart:", waffenart, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Visierung:", visierung, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Geschoss:", geschoss, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Lauflänge:", lauflaenge, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Scheibe Nr.:", scheibenNr, labelFont, bodyFont);
+
+            addDetailRow(detailsTable, "Startgeld:", startgeld, labelFont, bodyFont);
+            addDetailRow(detailsTable, "Ansprechpartner:", ansprechpartner, labelFont, bodyFont);
+            addDetailRow(detailsTable, "E-Mail:", email, labelFont, bodyFont);
+
+            detailsTable.setSpacingAfter(15);
+            document.add(detailsTable);
+
+            // ==========================================
+            // 5. REGELWERK & HINWEISE (Basiert auf den Booleans)
+            // ==========================================
+            if (hinweiseSpO || haftung) {
+                Paragraph rulesHeader = new Paragraph("Allgemeine Bestimmungen:", sectionFont);
+                rulesHeader.setSpacingAfter(5);
+                document.add(rulesHeader);
+
+                com.lowagie.text.List list = new com.lowagie.text.List(com.lowagie.text.List.UNORDERED, 10);
+                list.setListSymbol(new Chunk("• ", sectionFont));
+
+                if (hinweiseSpO) {
+                    list.add(new ListItem("Der Wettkampf wird auf Grundlage der aktuellen Sportordnung durchgeführt.", bodyFont));
+                }
+                if (haftung) {
+                    list.add(new ListItem("Für Waffen, Munition und Ausrüstung sind die Teilnehmer selbst verantwortlich. Der Veranstalter übernimmt keine Haftung.", bodyFont));
+                }
+
+                document.add(list);
+            }
+
+            // ==========================================
+            // 6. FUSSZEILE
+            // ==========================================
+            Paragraph footer = new Paragraph("\n\nErstellt am: " + java.time.LocalDate.now(), footerFont);
+            footer.setAlignment(Element.ALIGN_RIGHT);
+            document.add(footer);
 
             document.close();
 
@@ -134,24 +301,35 @@ public class Controller {
             return ResponseEntity.internalServerError().build();
         }
 
-        // 3. PDF als Byte-Array an den Browser zurückgeben
         byte[] pdfBytes = out.toByteArray();
 
-        
-
-        // Dem Browser explizit sagen, dass ein PDF kommt
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "ausschreibung_test.pdf");
-
-        // CORS-Header zur Sicherheit direkt in der Antwort mitsenden
-        headers.add("Access-Control-Allow-Origin", "*");
-        headers.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-        headers.add("Access-Control-Allow-Headers", "application/json");
+        headers.setContentDispositionFormData("inline", "ausschreibung.pdf");
 
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+
+    private Chunk createLineSeparator(Color color, float thickness) {
+        com.lowagie.text.pdf.draw.LineSeparator line = new com.lowagie.text.pdf.draw.LineSeparator();
+        line.setLineColor(color);
+        line.setLineWidth(thickness);
+        return new Chunk(line);
+    }
+
+    private void addDetailRow(PdfPTable table, String label, String value, Font labelFont, Font bodyFont) {
+        PdfPCell cellLabel = new PdfPCell(new Phrase(label, labelFont));
+        cellLabel.setBorder(Rectangle.NO_BORDER);
+        cellLabel.setPaddingBottom(8);
+
+        PdfPCell cellValue = new PdfPCell(new Phrase(value, bodyFont));
+        cellValue.setBorder(Rectangle.NO_BORDER);
+        cellValue.setPaddingBottom(8);
+
+        table.addCell(cellLabel);
+        table.addCell(cellValue);
     }
 
     // Hilfsmethode zum Befüllen der Tabellenzellen
@@ -162,4 +340,18 @@ public class Controller {
         table.addCell(cell);
     }
 
+    // Hilfsmethode zum Formatieren von ISO-Daten (YYYY-MM-DD -> DD.MM.YYYY)
+    private String formatDatum(String inputDatum) {
+        if (inputDatum == null || inputDatum.isBlank()) {
+            return "";
+        }
+        try {
+            LocalDate date = LocalDate.parse(inputDatum);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            return date.format(formatter);
+        } catch (Exception e) {
+            // Falls der String schon formatiert ist oder ein unerwartetes Format hat:
+            return inputDatum;
+        }
+    }
 }
