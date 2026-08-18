@@ -182,3 +182,47 @@
     border-right-color: var(--border);
   }
 }
+
+/* 1. Zentriert das gesamte Formular auf der Seite */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* 2. Erstellt das tabellarische Raster */
+.grid-form {
+    display: grid;
+    /* Spalte 1 (Labels): passt sich dem längsten Text an */
+    /* Spalte 2 (Inputs): nimmt den restlichen Platz ein */
+    grid-template-columns: max-content 1fr; 
+    gap: 12px 20px; /* 12px Abstand nach unten, 20px Abstand zwischen Label und Input */
+    max-width: 600px; /* Verhindert, dass das Formular zu breit gezogen wird */
+    width: 100%;
+}
+
+/* 3. Sorgt dafür, dass Labels linksbündig sind und sauber mittig zum Input stehen */
+.grid-form label {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+/* 4. Inputs einheitlich linksbündig machen */
+.grid-form input, 
+.grid-form select {
+    width: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+}
+
+/* Optional: Überschriften (wie "2. Sportliche Zuordnung") über beide Spalten strecken */
+.grid-section-title {
+    grid-column: span 2;
+    text-align: center;
+    margin-top: 20px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}

@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -70,7 +72,6 @@ public class Controller {
 
     @GetMapping("/disziplinen")
     public List<Disziplin> getDisziplinen(@RequestParam(required = false) String verband) {
-        System.out.println(verband);       
         if (verband != null && !verband.trim().isEmpty()) {            
             return disziplinRepo.findByVerbandIgnoreCase(verband);
         }
@@ -92,6 +93,7 @@ public class Controller {
         String anmeldeschluss    = formatDatum((String) payload.getOrDefault("anmeldeschluss", "-"));
         String ansprechpartner  = (String) payload.getOrDefault("ansprechpartner", "-");
         String email            = (String) payload.getOrDefault("email", "-");
+        String verband = (String) payload.getOrDefault("verband", "-");
         Object rawAltersklassen = payload.get("angeboteneAltersklassen");
         String altersklassenText = "-";
         if (rawAltersklassen instanceof java.util.List<?>) {
@@ -101,6 +103,8 @@ public class Controller {
             altersklassenText = rawAltersklassen.toString();
         }
         Object rawDisziplin = payload.get("disziplin");
+        String eigeneDisziplin = (String) payload.getOrDefault("disziplin", "-");
+        String eigenSchuesseZeit = "-";
         String kennziffer = "-";
         String bezeichnung = "-";
         String waffenart = "-";
@@ -112,37 +116,50 @@ public class Controller {
         String wettkampfschuesse = "-";
         String zeitvorgabeInMin = "-";
         String scheibenNr = "-";
-        String infos = "-";
+        boolean vereinsinterneAusschreibung = (boolean)payload.getOrDefault("vereinsinterneAusschreibung", false);
+        
 
         String disziplinName = null; // Variable zum Speichern des Klartext-Namens der Disziplin
-         
-        if (rawDisziplin != null && !rawDisziplin.toString().isBlank()) {
-        try {
-            Long id = Long.valueOf(rawDisziplin.toString());            
-            Disziplin d = disziplinRepo.findById(id).orElse(null);
-            if (d != null) {
-                kennziffer = d.getKennziffer();
-                bezeichnung = d.getBezeichnung();
-                waffenart = d.getWaffenart();
-                lauflaenge = d.getLauflaenge();
-                visierung = d.getVisierung();
-                geschoss = d.getGeschoss();
-                distanz = d.getDistanz();
-                anschlagsart = d.getAnschlagsart();
-                wettkampfschuesse = d.getWettkampfschuesse();
-                zeitvorgabeInMin = d.getZeitvorgabeInMin();
-                scheibenNr = d.getScheibenNr();
-                infos = d.getInfos();
-            };
-        } catch (NumberFormatException e) {
-            // Falls disziplinId schon als Klartext-Name gesendet wurde
-            disziplinName = rawDisziplin.toString();
+        System.out.println("Verband: " + verband);
+        if(!vereinsinterneAusschreibung) {
+            if (rawDisziplin != null && !rawDisziplin.toString().isBlank()) {
+                try {
+                    Long id = Long.valueOf(rawDisziplin.toString());            
+                    Disziplin d = disziplinRepo.findById(id).orElse(null);
+                    if (d != null) {
+                        kennziffer = d.getKennziffer();
+                        bezeichnung = d.getBezeichnung();
+                        waffenart = d.getWaffenart();
+                        lauflaenge = d.getLauflaenge();
+                        visierung = d.getVisierung();
+                        geschoss = d.getGeschoss();
+                        distanz = d.getDistanz();
+                        anschlagsart = d.getAnschlagsart();
+                        wettkampfschuesse = d.getWettkampfschuesse();
+                        zeitvorgabeInMin = d.getZeitvorgabeInMin();
+                        scheibenNr = d.getScheibenNr();
+                    };
+                } catch (NumberFormatException e) {
+                    // Falls disziplinId schon als Klartext-Name gesendet wurde
+                    disziplinName = rawDisziplin.toString();
+                }
+            }
+        } else {
+            waffenart = (String) payload.getOrDefault("waffenart", "-");
+            lauflaenge = (String) payload.getOrDefault("lauflaenge", "-");
+            visierung = (String) payload.getOrDefault("visierung", "-");
+            geschoss = (String) payload.getOrDefault("geschoss", "-");
+            distanz = (String) payload.getOrDefault("distanz", "-");
+            anschlagsart = (String) payload.getOrDefault("anschlag", "-");
+            scheibenNr = (String) payload.getOrDefault("scheibenNr", "-");
+            eigenSchuesseZeit = (String) payload.getOrDefault("schuesseZeit", "-");
         }
-    }      
+              
         
         
         // Booleans auslesen
         boolean hinweiseSpO      = Boolean.TRUE.equals(payload.get("hinweiseSpO"));
+        boolean gesundheit       = Boolean.TRUE.equals(payload.get("gesundheit"));
         boolean haftung          = Boolean.TRUE.equals(payload.get("haftungsausschluss"));
 
         // Datums-String zusammenbauen (z. B. "17.01.2026 - 18.01.2026")
@@ -245,13 +262,24 @@ public class Controller {
 
             // Disziplin-Spezifische Felder aus der Datenbank
             String disziplinTitel = (!kennziffer.isEmpty() ? kennziffer + " " : "") + bezeichnung;
-            addDetailRow(detailsTable, "Disziplin:", disziplinTitel, labelFont, bodyFont);
+            if(vereinsinterneAusschreibung) {
+                addDetailRow(detailsTable, "Disziplin:", eigeneDisziplin, labelFont, bodyFont);
+            }else {
+                addDetailRow(detailsTable, "Disziplin:", disziplinTitel, labelFont, bodyFont);
+            }
+            addDetailRow(detailsTable, "Altersklasse(n):", altersklassenText, labelFont, bodyFont);
             addDetailRow(detailsTable, "Distanz:", distanz, labelFont, bodyFont);
             addDetailRow(detailsTable, "Anschlag:", anschlagsart, labelFont, bodyFont);
 
             String programmText = wettkampfschuesse + (!wettkampfschuesse.isEmpty() ? " Schuss" : "") 
                 + (!zeitvorgabeInMin.isEmpty() ? " in " + zeitvorgabeInMin + " Min." : "");
-            addDetailRow(detailsTable, "Programm:", programmText, labelFont, bodyFont);
+            
+            if(vereinsinterneAusschreibung) {
+                addDetailRow(detailsTable, "Schüsse und Zeitvorgabe:", eigenSchuesseZeit, labelFont, bodyFont);
+            }else {
+                addDetailRow(detailsTable, "Schüsse und Zeitvorgabe:", programmText, labelFont, bodyFont);
+            }
+            
 
             addDetailRow(detailsTable, "Waffenart:", waffenart, labelFont, bodyFont);
             addDetailRow(detailsTable, "Visierung:", visierung, labelFont, bodyFont);
@@ -262,6 +290,8 @@ public class Controller {
             addDetailRow(detailsTable, "Startgeld:", startgeld, labelFont, bodyFont);
             addDetailRow(detailsTable, "Ansprechpartner:", ansprechpartner, labelFont, bodyFont);
             addDetailRow(detailsTable, "E-Mail:", email, labelFont, bodyFont);
+            String weitereInfo = payload.get("weitereInfo") != null ? payload.get("weitereInfo").toString() : "-";
+            addDetailRow(detailsTable, "Weitere Informationen:", weitereInfo, labelFont, bodyFont);
 
             detailsTable.setSpacingAfter(15);
             document.add(detailsTable);
@@ -278,10 +308,16 @@ public class Controller {
                 list.setListSymbol(new Chunk("• ", sectionFont));
 
                 if (hinweiseSpO) {
-                    list.add(new ListItem("Der Wettkampf wird auf Grundlage der aktuellen Sportordnung durchgeführt.", bodyFont));
+                    list.add(new ListItem(  "„Mit der Anmeldung erkennt der Teilnehmer die Sportordnung des " + verband + ", sowie die Schießstandordnung des austragenden Vereins als verbindlich an." + 
+                                            " Den Anweisungen der Schießleitung und der Standaufsichten ist Folge zu leisten.“", bodyFont));
                 }
                 if (haftung) {
-                    list.add(new ListItem("Für Waffen, Munition und Ausrüstung sind die Teilnehmer selbst verantwortlich. Der Veranstalter übernimmt keine Haftung.", bodyFont));
+                    list.add(new ListItem(". Diese Haftungsbeschränkung gilt nicht für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit.", bodyFont));
+                }
+                if(gesundheit) {
+                    list.add(new ListItem(  "Jeder Schütze ist für die Sicherheit der von ihm abgegebenen Schüsse sowie für den Zustand seiner Waffen und Ausrüstung selbst verantwortlich." +
+                                            "Die Teilnehmer erklären mit der Anmeldung, dass keine gesundheitlichen Einschränkungen vorliegen, die einer sicheren Teilnahme am Wettkampf entgegenstehen." +
+                                            "Für ausreichenden eigenen Versicherungsschutz (Haftpflicht/Unfall) hat jeder Teilnehmer selbst zu sorgen.", bodyFont));
                 }
 
                 document.add(list);
