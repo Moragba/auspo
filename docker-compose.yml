@@ -1,0 +1,31 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: auspo_frontend_app
+    #zum lokalen testen
+    #ports:
+    #  - "8081:8081"
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - proxy-network
+
+  backend:
+    build: ./backend
+    container_name: auspo_backend_api 
+    environment:
+      DB_SERVER_URL: jdbc:mysql://202.61.232.140:3306/k217873_auspo?serverTimezone=UTC&useSSL=false
+      DB_USERNAME: k217873_auspo_api
+      DB_PASSWORD: NZn*Sv-vF8q6*SvF8q6*
+    restart: always
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    name: proxy-network  
+    #zum lokalen testen
+    #external: false
+    external: true
+

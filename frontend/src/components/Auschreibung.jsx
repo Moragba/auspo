@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-const api_url = import.meta.env.VITE_API_URL 
 
 export default function AusschreibungGenerator() {
   
@@ -52,7 +51,7 @@ export default function AusschreibungGenerator() {
 
   // Verbände beim Start laden (aus MySQL über Spring Boot)
   useEffect(() => {
-    fetch(`${api_url}/api/verbaende`)
+    fetch(`/api/verbaende`)
       .then((res) => res.json())
       .then((data) => setVerbaende(data))
       .catch((err) => console.error('Fehler beim Laden der Verbände:', err));
@@ -71,7 +70,7 @@ export default function AusschreibungGenerator() {
       setSelectedDisziplin('selbst');
       setSelectedvereinsinterneAusschreibung(true);
       setLoadingAltersklassen(true);
-      fetch(`${api_url}/api/altersklassen`)
+      fetch(`/api/altersklassen`)
         .then((res) => res.json())
         .then((data) => {
           setAltersklassen(data);
@@ -81,7 +80,7 @@ export default function AusschreibungGenerator() {
     }else{
       if (verband) {
         setLoadingDisziplinen(true);
-        fetch(`${api_url}/api/disziplinen?verband=${encodeURIComponent(verband)}`)
+        fetch(`/api/disziplinen?verband=${encodeURIComponent(verband)}`)
           .then((res) => res.json())
           .then((data) => {
             setDisziplinen(data);
@@ -93,7 +92,7 @@ export default function AusschreibungGenerator() {
     
   };
 
-  // Altersklassen nach Disziplin nachladen
+  // Altersklassen nach Disziplin nachladen //noch nicht voll implementiert bei refactoring ergänzen
   const handleDisziplinChange = (e) => {
     const disziplinId = e.target.value;
     setSelectedDisziplin(disziplinId);
@@ -101,7 +100,7 @@ export default function AusschreibungGenerator() {
 
     if (disziplinId) {
       setLoadingAltersklassen(true);
-      fetch(`${api_url}/api/altersklassen`)
+      fetch(`/api/altersklassen`)
         .then((res) => res.json())
         .then((data) => {
           setAltersklassen(data);
@@ -153,7 +152,7 @@ export default function AusschreibungGenerator() {
     console.log('Erstelle Ausschreibung:', ausschreibungPayload);
 
     // POST an Spring Boot -> Speichern in MySQL & PDF-Generierung anstoßen
-    fetch(`${api_url}/api/getpdf`, {
+    fetch(`/api/getpdf`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(ausschreibungPayload)
@@ -305,7 +304,6 @@ export default function AusschreibungGenerator() {
           <div className="form-group">
             <label>Auszuschreibende Disziplin:</label>
             <select
-              style={{ maxWidth: '40vw', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
               value={selectedDisziplin}
               onChange={handleDisziplinChange}
               disabled={(!selectedVerband || selectedVerband === 'selbst') || loadingDisziplinen}
@@ -315,8 +313,8 @@ export default function AusschreibungGenerator() {
                 {loadingDisziplinen ? 'Lade Disziplinen...' : '-- Erst Verband wählen --'}
               </option>
               {disziplinen.map((disziplin) => (
-                <option key={disziplin.id} value={disziplin.id} >
-                  {disziplin.kennziffer} ({disziplin.bezeichnung}: {disziplin.waffenart} - {disziplin.distanz}m)
+                <option key={disziplin.id} value={disziplin.id} title={`${disziplin.kennziffer} (${disziplin.bezeichnung}: ${disziplin.waffenart} - ${disziplin.distanz}m)`}>
+                  {disziplin.kennziffer}: {disziplin.bezeichnung} - {disziplin.distanz}m
                 </option>
               ))}
             </select>
@@ -549,8 +547,4 @@ export default function AusschreibungGenerator() {
   );
 
  
-}
-
-function zeigeAltersklassenFelder(){
-  
 }

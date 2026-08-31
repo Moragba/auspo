@@ -18,6 +18,7 @@ public class AltersKlassenInit implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("Dateninitialisierung 'AltersKlassen-Table' gestartet...");
 
+        //Objekte Hardcode erzeugt wird  während des Refactoring durch eine ,json ersetzt
         AltersKlasse obj1 = new AltersKlasse();
         obj1.setKennziffer("22");
         obj1.setGeschlecht("männlich");

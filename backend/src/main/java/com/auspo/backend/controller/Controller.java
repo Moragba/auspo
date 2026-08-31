@@ -7,8 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -190,18 +188,14 @@ public class Controller {
             Font bodyFont    = FontFactory.getFont(FontFactory.HELVETICA, 10, darkTextColor);
             Font footerFont  = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8, Color.GRAY);
 
-            // ==========================================
             // 1. KOPFZEILE (Vereinsname)
-            // ==========================================
             Paragraph topHeader = new Paragraph(vereinsname.toUpperCase(), headerFont);
             topHeader.setAlignment(Element.ALIGN_CENTER);
             document.add(topHeader);
 
             document.add(createLineSeparator(primaryColor, 1.5f));
 
-            // ==========================================
             // 2. HAUPTTITEL
-            // ==========================================
             Paragraph mainTitle = new Paragraph("A U S S C H R E I B U N G", titleFont);
             mainTitle.setAlignment(Element.ALIGN_CENTER);
             mainTitle.setSpacingBefore(10);
@@ -212,9 +206,7 @@ public class Controller {
             eventTitle.setSpacingAfter(15);
             document.add(eventTitle);
 
-            // ==========================================
             // 3. ECKDATEN-BOX (Datum, Ort, Anmeldeschluss)
-            // ==========================================
             PdfPTable infoBox = new PdfPTable(1);
             infoBox.setWidthPercentage(100);
 
@@ -246,9 +238,7 @@ public class Controller {
             infoBox.setSpacingAfter(15);
             document.add(infoBox);
 
-            // ==========================================
             // 4. DETAIL-TABELLE
-            // ==========================================
             PdfPTable detailsTable = new PdfPTable(2);
             detailsTable.setWidthPercentage(100);
             detailsTable.setWidths(new float[]{30, 70});
@@ -296,9 +286,7 @@ public class Controller {
             detailsTable.setSpacingAfter(15);
             document.add(detailsTable);
 
-            // ==========================================
             // 5. REGELWERK & HINWEISE (Basiert auf den Booleans)
-            // ==========================================
             if (hinweiseSpO || haftung) {
                 Paragraph rulesHeader = new Paragraph("Allgemeine Bestimmungen:", sectionFont);
                 rulesHeader.setSpacingAfter(5);
@@ -323,9 +311,7 @@ public class Controller {
                 document.add(list);
             }
 
-            // ==========================================
             // 6. FUSSZEILE
-            // ==========================================
             Paragraph footer = new Paragraph("\n\nErstellt am: " + java.time.LocalDate.now(), footerFont);
             footer.setAlignment(Element.ALIGN_RIGHT);
             document.add(footer);
@@ -341,7 +327,7 @@ public class Controller {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("inline", "ausschreibung.pdf");
+        headers.setContentDispositionFormData("inline", "Ausschreibung.pdf");
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -369,12 +355,12 @@ public class Controller {
     }
 
     // Hilfsmethode zum Befüllen der Tabellenzellen
-    private void addTableCell(PdfPTable table, String text, Font font, Color bgColor) {
+    /*private void addTableCell(PdfPTable table, String text, Font font, Color bgColor) {
         PdfPCell cell = new PdfPCell(new Phrase(text, font));
         cell.setBackgroundColor(bgColor);
         cell.setPadding(8);
         table.addCell(cell);
-    }
+    }*/
 
     // Hilfsmethode zum Formatieren von ISO-Daten (YYYY-MM-DD -> DD.MM.YYYY)
     private String formatDatum(String inputDatum) {
